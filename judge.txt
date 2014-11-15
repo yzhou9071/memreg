@@ -1,0 +1,8 @@
+	BLEZ R0,#2
+	J L1
+	J L2
+L1:	ADD R3,R2,R1
+	J L3
+L2:	SUB R3,R2,R1
+L3:	NOP
+	EXIT
