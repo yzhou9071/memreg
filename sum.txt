@@ -1,0 +1,5 @@
+L1:	ADD R3,R3,R1
+	SLT R4,R5,R3
+	BGTZ R4,#2
+	J L1
+	EXIT
