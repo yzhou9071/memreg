@@ -1,0 +1,62 @@
++#############TYPE R
+++++++++++func parse_reg_R2
+mul Rs,Rt					Rs * Rt -> Hi||Lo				000000 Rs(5) Rt(5) 00000 00000 011000
+mulu Rs,Rt					Rs * Rt -> Hi||Lo				000000 Rs(5) Rt(5) 00000 00000 011001
+div Rs,Rt					Rs / Rt -> Lo , Rs % Rt -> Hi	000000 Rs(5) Rt(5) 00000 00000 011010
+divu Rs,Rt					Rs / Rt -> Lo , Rs % Rt -> Hi	000000 Rs(5) Rt(5) 00000 00000 011011
+++++++++++func parse_reg_R3
+add Rd,Rs,Rt				Rs + Rt -> Rd					000000 Rs(5) Rt(5) Rd(5) 00000 100000
+addu Rd,Rs,Rt				Rs + Rt -> Rd					000000 Rs(5) Rt(5) Rd(5) 00000 100001
+sub Rd,Rs,Rt				Rs - Rt -> Rd					000000 Rs(5) Rt(5) Rd(5) 00000 100010
+subu Rd,Rs,Rt				Rs - Rt -> Rd					000000 Rs(5) Rt(5) Rd(5) 00000 100011
+and Rd,Rs,Rt				Rs & Rt -> Rd					000000 Rs(5) Rt(5) Rd(5) 00000 100100
+or Rd,Rs,Rt					Rs | Rt -> Rd					000000 Rs(5) Rt(5) Rd(5) 00000 100101
+nor Rd,Rs,Rt				~(Rs | Rt) -> Rd				000000 Rs(5) Rt(5) Rd(5) 00000 100111
+xor Rd,Rs,Rt				Rs ^ Rt -> Rd					000000 Rs(5) Rt(5) Rd(5) 00000 101000
+slt Rd,Rs,Rt				if Rs<Rt Rd=1 else Rd=0			000000 Rs(5) Rt(5) Rd(5) 00000 101010
+sltu Rd,Rs,Rt				if Rs<Rt Rd=1 else Rd=0			000000 Rs(5) Rt(5) Rd(5) 00000 101011
+++++++++++func parse_reg_Rf(float)
+add.s Rd,Rs,Rt				Rs + Rt -> Rd					010001 00000 ft(5) fs(5) fd(5) 000000
+add.d Rd,Rs,Rt				Rs + Rt -> Rd					010001 00001 ft(5) fs(5) fd(5) 000000
+sub.s Rd,Rs,Rt				Rs - Rt -> Rd					010001 00000 ft(5) fs(5) fd(5) 000001
+sub.d Rd,Rs,Rt				Rs - Rt -> Rd					010001 00001 ft(5) fs(5) fd(5) 000001
+mul.s Rd,Rs,Rt				Rs * Rt -> Rd					010001 00000 ft(5) fs(5) fd(5) 000010
+mul.d Rd,Rs,Rt				Rs * Rt -> Rd					010001 00001 ft(5) fs(5) fd(5) 000010
+div.s Rd,Rs,Rt				Rs / Rt -> Rd					010001 00000 ft(5) fs(5) fd(5) 000011
+div.d Rd,Rs,Rt				Rs / Rt -> Rd					010001 00001 ft(5) fs(5) fd(5) 000011
++#############TYPE J
+j jump_target				jump_target -> pc				000010 jump_target
+jal jump_target				pc + 4 -> R31,jump_target -> pc	000011 jump_target
+mfepc Rt					EPC -> Rt						010000 00000 Rt(5) 01110 00000 000000
+mfco Rd						Co	-> Rd						010000 00000 Rd(5) 01101 00000 000000
+jr Rs						Rs -> pc						000000 Rs(5) 00000 00000 00000 001000
+jalr Rd,Rs					pc + 4 -> Rd , Rs -> pc			000000 Rs(5) 00000 Rd(5) 00000 001001
+mfhi Rd						Hi -> Rd						000000 00000 00000 Rd(5) 00000 010000
+mflo Rd						Lo -> Rd						000000 00000 00000 Rd(5) 00000 010010
+nop							pc + 4 -> pc					000000 00000 00000 00000 00000 000000
++#############TYPE I
+++++++++++func parse_reg_Im
+addi Rt,Rs,Immediate		Rs + Imm -> Rt					001000 Rs(5) Rt(5) immediate
+addiu Rt,Rs,Immediate		Rs + Imm -> Rt					001001 Rs(5) Rt(5) immediate
+slti Rt,Rs,Immediate		if Rs<Imm Rt=1 else Rt=0		001010 Rs(5) Rt(5) immediate
+sltiu Rt,Rs,Immediate		if Rs<Imm Rt=1 else Rt=0		001011 Rs(5) Rt(5) immediate
+andi Rt,Rs,Immediate		Rs & Imm -> Rt					001100 Rs(5) Rt(5) immediate
+ori Rt,Rs,Immediate			Rs | Imm -> Rt					001101 Rs(5) Rt(5) immediate
+xori Rt,Rs,Immediate		Rs ^ Imm -> Rt					001110 Rs(5) Rt(5) immediate
+++++++++++func parse_reg_Ilui
+lui Rt,immediate			Imm -> Rt						001111 00000 Rt(5) immediate
+++++++++++func parse_reg_Io2
+beq Rs,Rt,offset			if Rs=Rt pc+4*offset else pc+4	000100 Rs(5) Rt(5) offset
+bne Rs,Rt,offset			if Rs!=Rt pc+4*offset else pc+4	000101 Rs(5) Rt(5) offset
+lw Rt,offset(Rs)			MEM(Rs + offset) -> Rt			100011 Rs(5) Rt(5) offset
+sw Rt,offset(Rs)			Rt -> MEM(Rs + offset)			101011 Rs(5) Rt(5) offset
+lbu Rt,offset(Rs)			MEM(Rs + offset) -> Rt			100100 Rs(5) Rt(5) offset
+lb Rt,offset(Rs)			MEM(Rs + offset) -> Rt			100000 Rs(5) Rt(5) offset
+sb Rt,offset(Rs)			Rt & 0xff -> MEM(Rs + offset)	101000 Rs(5) Rt(5) offset
+++++++++++func parse_reg_Io1
+blez Rs,offset				if Rs<=0 pc+4*offset else pc+4	000110 Rs(5) 00000 offset
+bgtz Rs,offset				if Rs>0 pc+4*offset else pc+4	000111 Rs(5) 00000 offset
+bltz Rs,offset				if Rs<0 pc+4*offset else pc+4	000001 Rs(5) 00000 offset
+++++++++++func parse_reg_Iof(float)
+lwc1 ft,offset(Rs)			MEM(Rs + offset) -> ft			110001 Rs(5) ft(5) offset
+swc1 ft,offset(Rs)			ft -> MEM(Rs + offset)			111001 Rs(5) ft(5) offset
